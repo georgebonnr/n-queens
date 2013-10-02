@@ -106,16 +106,8 @@
     hasColConflictAt: function(colIndex){
       var that = this;
       var colSum = 0;
-      var getCol = function(colIndex) {
-        var column = [];
-        for (j = 0; j < that.rows().length; j++) { // we can just search rows by colIndex, we don't actually need to create an array for each column
-          column.push(that.rows()[j][colIndex]);
-        }
-        return column;
-      };
-      var col = getCol(colIndex);
-      for (i = 0; i < col.length; i++) {
-        colSum += col[i];
+      for (var j = 0; j < this.get('n'); j++) {
+        colSum += this.get(j)[colIndex];
       }
       return colSum > 1;
     },
@@ -143,7 +135,7 @@
       var col = majorDiagonalColumnIndexAtFirstRow;
       for (var m = 0; m < this.get('n'); m++) {
         if (col >= 0 && col < this.get('n')) {
-          majDiagSum += this.rows()[m][col];
+          majDiagSum += this.get(m)[col];
         }
         col++;
       }
@@ -173,7 +165,7 @@
       var col = minorDiagonalColumnIndexAtFirstRow;
       for (var m = 0; m < this.get('n'); m++) {
         if (col >= 0 && col < this.get('n')) {
-          minDiagSum += this.rows()[m][col];
+          minDiagSum += this.get(m)[col];
         }
         col--;
       }
