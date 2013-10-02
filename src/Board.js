@@ -76,14 +76,14 @@
 
     // ROWS - run from left to right
     // --------------------------------------------------------------
-    // 
+    //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex){
       var rowSum = 0;
       for (var j = 0; j < this.get(rowIndex).length; j++) {
         rowSum += this.get(rowIndex)[j];
       }
-      return rowSum > 0; // fixme
+      return rowSum > 1;
     },
 
     // test if any rows on this board contain conflicts
@@ -94,7 +94,7 @@
           status = true;
         }
       }
-      return status; // fixme
+      return status;
     },
 
 
