@@ -38,33 +38,6 @@ window.countNRooksSolutions = function(n){
   //return solutionCount;
 };
 
-
-window.translateToMajorDiagIndex = function(rowIndex,colIndex) {
-  var col = colIndex;
-  for (var t = rowIndex - 1; t >= 0; t--) {
-    col--;
-  }
-  return col;
-};
-
-window.translateToMinorDiagIndex = function(rowIndex,colIndex) {
-  var col = colIndex;
-  for (var t = rowIndex - 1; t >= 0; t--) {
-    col++;
-  }
-  return col;
-};
-
-window.getSquaresInRemainingMajorDiag = function(rowIndex,colIndex) {
-  var results = [];
-  var col = colIndex + 1;
-  for (var t = rowIndex + 1; t < this.get('n'); t++) {
-    results.push([t, col]);
-    col++;
-  }
-  return results;
-};
-
 window.extend = function(destination, origin) {
   for (var key in origin) {
     if (!(Array.isArray(origin[key]))) {
@@ -89,17 +62,6 @@ window.countNQueensSolutions = function(n){
   if (n === 0) {
     return 1;
   }
-  // one blank nxn board
-  // pass board to an iterator
-  // iterator will place a queen at each possible spot on board (checking for conflicts, which will at this point be none),
-  // and will recursively call itself with the modified board (queen at 0,0)
-  // -with our first board, which has a queen in [0,0], we go to the second row, and 
-  // iterate over the second row of the modified board.  We check each space in the row
-  // that it is 0 (not null, which indicates dead space, set at the last time we placed a queen) and then if there are no
-  // column or diagonal conflicts on our check, set 1. Null out all remaining squares with the same column index
-  // and in the same diagonal, and repeat until there are no more rows.
-  // When there are no more rows to go through, check if the number of queens === n, or if we successfully placed a queen in the row
-
 
   // if n is even, for row 0 don't bother checking boards for dot at [0,0].  Start at index 1.  (True up to n =20)
   var solutionCount = 0;
@@ -128,12 +90,10 @@ window.countNQueensSolutions = function(n){
           var boardCopy = [];
           for (var e = 0; e < n; e++) {
             boardCopy.push(board[e].slice());
-            // debugger;
           }
           extend(boardCopy, board); // extend board's methods to boardCopy
           // now set a queen down in the available space
           boardCopy[curRow][y] = 1;
-          // console.log(boardCopy);
           // set the newly implied dead space
           // in the column where we just added the queen
           for (var c = curRow + 1; c < n; c++) {
@@ -155,14 +115,12 @@ window.countNQueensSolutions = function(n){
               col--;
             }
           }
-          // console.log(boardCopy);
           // call recurSearch on the next row
           recurSearch(boardCopy, curRow+1);
 
         }
       }
     }
-    // if we got through all columns in the row without adding a queen, we're done; the current board is not a solution
     return;
   };
   recurSearch(firstBoard, 0);
