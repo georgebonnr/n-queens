@@ -59,4 +59,14 @@ describe("solvers", function() {
 
   });
 
+  //   describe('count Queens solutions for 15', function(){
+
+  //   it('finds the number of valid solutions for n = 15', function(){
+  //     var solutionCount = countNQueensSolutions(15);
+  //     var expectedSolutionCount = 2279184;
+  //     expect(solutionCount).to.be.equal(expectedSolutionCount);
+  //   });
+
+  // });
+
 });
