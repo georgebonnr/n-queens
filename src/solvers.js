@@ -74,6 +74,7 @@ window.countNRooksSolutions = function(n){
           }
           // call recurSearch on the next row
           recurSearch(boardCopy, curRow+1);
+
         }
       }
     }
@@ -158,9 +159,7 @@ window.findNQueensSolution = function(n){
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n){
-  if (n === 0) {
-    return 1;
-  }
+  if (n === 0) {return 1;} // if we don't have a board, there is one unique solution
 
   // if n is even, for row 0 don't bother checking boards for dot at [0,0].  Start at index 1.  (True up to n =20)
   var solutionCount = 0;
@@ -176,46 +175,74 @@ window.countNQueensSolutions = function(n){
     firstBoard.push(blankRow(n));
   }
   var recurSearch = function(board, curRow) {
+    var blockout = curRow+1; // we set the value for use in identifying dead space implied by the queen we put down in curRow
+    // this blockout value is curRow + 1 so that we don't have blockout values of 0, which would confuse
+
     // for each column in the current row
     for (var y = 0; y < n; y++) {
       // if there's an available space
-      if (board[curRow][y] !== null) {
+      if (board[curRow][y] === 0) {
         // if we're in the last row, we know we've found a valid solution, so we increment the solutionCount and we're done
         if (curRow === n - 1 ) {
           solutionCount +=1;
         // otherwise we put a queen down and recursively search the next row
         } else {
-          // create a deep copy of the current board
-          var boardCopy = [];
-          for (var e = 0; e < n; e++) {
-            boardCopy.push(board[e].slice());
-          }
-          // now set a queen down in the available space
-          boardCopy[curRow][y] = 1;
-          // set the newly implied dead space
-          // in the column where we just added the queen
+          // we don't actually need to put queens down; if the value of the current square is 0, we know we could put down a queen
+
+          // set the newly implied dead space:
+          // - in the column where we just implicitly added the queen
           for (var c = curRow + 1; c < n; c++) {
-            boardCopy[c][y] = null;
-          }
-          // in the major diagonal where we just added the queen
-          var col = y + 1;
-          for (var t = curRow + 1; t < n; t++) {
-            if (col <= n - 1) {
-              boardCopy[t][col] = null;
-              col++;
+            // if the square hasn't previously been marked as dead space
+            if (!board[c][y]) {
+              // mark it as dead space
+              board[c][y] = blockout;
             }
           }
-          // in the minor diagonal where we just added the queen
-          col = y - 1;
-          for (t = curRow + 1; t < n; t++) {
+          // - in the major diagonal where we just implicitly added the queen
+          var col = y + 1;
+          for (var t = curRow + 1; t < n; t++, col++) {
+            if (col <= n - 1) {
+              if (!board[t][col]) {
+                board[t][col] = blockout;
+              }
+            }
+          }
+          // - in the minor diagonal where we just implicitly added the queen
+
+          for (col = y - 1, t = curRow + 1; t < n; t++, col--) {
             if (col >= 0) {
-              boardCopy[t][col] = null;
-              col--;
+              if (!board[t][col]) {
+                board[t][col] = blockout;
+              }
             }
           }
           // call recurSearch on the next row
-          recurSearch(boardCopy, curRow+1);
-
+          recurSearch(board, curRow+1);
+          // after we get back from the recursive call, we want to undo the setting of dead space that we did, before y increments:
+          // - in the column where we just implicitly added the queen
+          for (c = curRow + 1; c < n; c++) {
+            // if the square was marked as dead space because of our implicit queen placement in the curRow
+            if (board[c][y] === blockout) {
+              // then return the square to available space
+              board[c][y] = 0;
+            }
+          }
+          // - in the major diagonal where we just added the queen
+          for (col = y + 1, t = curRow + 1; t < n; t++, col++) {
+            if (col <= n - 1) {
+              if (board[t][col] === blockout) {
+                board[t][col] = 0;
+              }
+            }
+          }
+          // - in the minor diagonal where we just added the queen
+          for (col = y - 1, t = curRow + 1; t < n; t++, col--) {
+            if (col >= 0) {
+              if (board[t][col] === blockout) {
+                board[t][col] = 0;
+              }
+            }
+          }
         }
       }
     }
